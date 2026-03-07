@@ -16,7 +16,6 @@ import {
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import {
     Select,
     SelectContent,
@@ -26,29 +25,19 @@ import {
 } from '@/components/ui/select';
 import { Separator } from '@/components/ui/separator';
 import { classSchema } from '@/lib/schema';
+import UploadWidget from '@/components/upload-widget';
 
 const Create = () => {
     const back = useBack();
 
     const form = useForm<z.infer<typeof classSchema>>({
         resolver: zodResolver(classSchema),
-        defaultValues: {
-            name: '',
-            description: '',
-            subjectId: 1,
-            teacherId: '',
-            capacity: 30,
-            status: 'active',
-            bannerUrl: 'https://example.com/banner.jpg',
-            bannerCldPubId: 'placeholder-banner',
-            inviteCode: '',
-        },
     });
 
     const {
         handleSubmit,
         control,
-        formState: { isSubmitting },
+        formState: { isSubmitting, errors },
     } = form;
 
     const onSubmit = (values: z.infer<typeof classSchema>) => {
@@ -88,6 +77,23 @@ const Create = () => {
         },
     ];
 
+    const bannerPublicId = form.watch('bannerCldPubId');
+    const setBannerImage = (file, field) => {
+        if (file) {
+            field.onChange(file.url);
+            form.setValue('bannerCldPubId', file.publicId, {
+                shouldValidate: true,
+                shouldDirty: true,
+            });
+        } else {
+            field.onChange('');
+            form.setValue('bannerCldPubId', '', {
+                shouldValidate: true,
+                shouldDirty: true,
+            });
+        }
+    };
+
     return (
         <CreateView className='create-view'>
             <Breadcrumb />
@@ -113,12 +119,38 @@ const Create = () => {
                     <CardContent className='mt-7'>
                         <Form {...form}>
                             <form onSubmit={handleSubmit(onSubmit)} className='space-y-5'>
-                                <div className='space-y-3'>
-                                    <Label>
-                                        Banner Image <span className='text-orange-600'>*</span>
-                                    </Label>
-                                    <p>Upload Image Widget</p>
-                                </div>
+                                <FormField
+                                    control={control}
+                                    name='bannerUrl'
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>
+                                                Banner Image <span className='text-orange-500'>*</span>
+                                            </FormLabel>
+                                            <FormControl>
+                                                <UploadWidget
+                                                    value={
+                                                        field.value
+                                                            ? {
+                                                                url: field.value,
+                                                                publicId: bannerPublicId ?? '',
+                                                            }
+                                                            : null
+                                                    }
+                                                    onChange={(file: any, field: any) =>
+                                                        setBannerImage(file, field)
+                                                    }
+                                                />
+                                            </FormControl>
+                                            <FormMessage />
+                                            {errors.bannerCldPubId && !errors.bannerUrl && (
+                                                <p className='text-destructive text-sm'>
+                                                    {errors.bannerCldPubId.message?.toString()}
+                                                </p>
+                                            )}
+                                        </FormItem>
+                                    )}
+                                />
 
                                 <FormField
                                     control={control}
@@ -150,7 +182,7 @@ const Create = () => {
                                                 </FormLabel>
                                                 <Select
                                                     onValueChange={value => field.onChange(Number(value))}
-                                                    value={field?.value.toString()}
+                                                    value={field.value?.toString()}
                                                 >
                                                     <FormControl>
                                                         <SelectTrigger className='w-full'>
@@ -182,7 +214,7 @@ const Create = () => {
                                                 </FormLabel>
                                                 <Select
                                                     onValueChange={value => field.onChange(Number(value))}
-                                                    value={field?.value.toString()}
+                                                    value={field.value?.toString()}
                                                 >
                                                     <FormControl>
                                                         <SelectTrigger className='w-full'>
