@@ -1,6 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useBack } from '@refinedev/core';
-import { useForm } from 'react-hook-form';
+import { useForm } from '@refinedev/react-hook-form';
 import * as z from 'zod';
 
 import { Breadcrumb } from '@/components/refine-ui/layout/breadcrumb';
@@ -137,9 +137,7 @@ const Create = () => {
                                                             }
                                                             : null
                                                     }
-                                                    onChange={(file: any, field: any) =>
-                                                        setBannerImage(file, field)
-                                                    }
+                                                    onChange={(file: any) => setBannerImage(file, field)}
                                                 />
                                             </FormControl>
                                             <FormMessage />
