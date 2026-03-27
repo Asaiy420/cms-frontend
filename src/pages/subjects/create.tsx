@@ -1,9 +1,5 @@
-
-
 const SubjectsCreate = () => {
-  return (
-    <div>SubjectsCreate</div>
-  )
-}
+  return <div>SubjectsCreate</div>;
+};
 
-export default SubjectsCreate
+export default SubjectsCreate;
