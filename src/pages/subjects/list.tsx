@@ -113,7 +113,7 @@ const SubjectsList = () => {
         <p>Quick Access To Essential Metrics and Management Tools</p>
         <div className='actions-row'>
           <div className='search-field relative w-full sm:w-auto'>
-            <Search className='absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4' /> 
+            <Search className='absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4' />
             <input
               type='text'
               placeholder='Search by name'
